@@ -1748,9 +1748,21 @@ public:
 						ns.setAllowGlobal((bool)allowGlobal);
 					}
 					json& allowDefault = j["allowDefault"];
+#ifdef __FreeBSD__
+					if (allowDefault.is_boolean()) {
+						if(!!allowDefault){
+							setContent(req, res, "Allow Default disabled on FreeBSD");
+							res.status = 400;
+							return;
+						} else {
+							ns.setAllowDefault((bool)false);
+						}
+					}
+#else
 					if (allowDefault.is_boolean()) {
 						ns.setAllowDefault((bool)allowDefault);
 					}
+#endif
 					json& allowDNS = j["allowDNS"];
 					if (allowDNS.is_boolean()) {
 						ns.setAllowDNS((bool)allowDNS);
